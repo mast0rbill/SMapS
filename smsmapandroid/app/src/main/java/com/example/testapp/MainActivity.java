@@ -2,10 +2,13 @@ package com.example.testapp;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Location;
@@ -36,8 +39,8 @@ import java.io.Console;
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
-    private String twilioNumber = "3074666606";
-    private static String[] latandlong = new String[2];
+    public static String twilioNumber = "3074666606";
+    public static String[] latandlong = new String[2];
     public static String direction;
     private boolean read_direction = false;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -45,6 +48,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECEIVE_SMS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECEIVE_SMS},
+                        0);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+
+
         Window window = this.getWindow();
 
     // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -106,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     //smgr.sendTextMessage(txtMobile.getText().toString(),null, textToSend,null,null);
                     Toast.makeText(MainActivity.this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
                     SystemClock.sleep(7000);
-                    startActivity(new Intent(MainActivity.this, DisplayDirections.class));
+                    startActivity(new Intent(MainActivity.this, selection.class));
                     read_direction = false;
                 }
                 catch (Exception e){
