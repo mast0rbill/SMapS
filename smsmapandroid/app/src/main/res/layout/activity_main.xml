@@ -1,56 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:clickable="true"
     android:focusableInTouchMode="true"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
-    <TextView
-        android:id="@+id/test2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
-    <TextView
-        android:id="@+id/fstTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="150dp"
-        android:text="Mobile No" />
-    <EditText
-        android:id="@+id/mblTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:ems="10"/>
 
     <TextView
         android:id="@+id/secTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Message"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/msgTxt"
         android:layout_marginLeft="100dp" />
     <EditText
         android:id="@+id/msgTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="100dp"
+        android:layout_above="@+id/btnSend"
         android:ems="10" />
     <Button
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:text="Send SMS" />
+        android:padding="10dp"
+        android:background="@drawable/roundedbutton"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerInParent="true"
+        android:text="Get Direction" />
+
     <Button
-        android:id="@+id/getloc"
+        android:id="@+id/olddirection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/btnSend"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="100dp"
-        android:text="Get Location" />
-</LinearLayout>
+        android:background="@drawable/roundedbutton"
+        android:padding="10dp"
+        android:text="Previous Direction" />
+</RelativeLayout>

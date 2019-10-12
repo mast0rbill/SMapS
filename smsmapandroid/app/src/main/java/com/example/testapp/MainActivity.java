@@ -1,12 +1,16 @@
 package com.example.testapp;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.SystemClock;
@@ -14,6 +18,8 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,13 +40,22 @@ public class MainActivity extends AppCompatActivity {
     private static String[] latandlong = new String[2];
     public static String direction;
     private boolean read_direction = false;
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Window window = this.getWindow();
 
+    // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        TextView test = findViewById(R.id.test);
+    // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+    // finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.common_google_signin_btn_text_light));
+
         Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         getLatLong();
@@ -69,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 //                    startActivity(intent);
                     read_direction = true;
                     direction = msgData.substring(indexofbody+43, endofbodyindex);
-                    test.setText(msgData.substring(indexofbody, endofbodyindex) + msgData.substring(indexaddress, endindexaddress));
+                    //test.setText(msgData.substring(indexofbody, endofbodyindex) + msgData.substring(indexaddress, endindexaddress));
                 }
             } while (cursor.moveToNext());
         } else {
@@ -79,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         final EditText txtMessage;
         Button btnSms;
         btnSms = (Button)findViewById(R.id.btnSend);
-        txtMobile = (EditText)findViewById(R.id.mblTxt);
+        //txtMobile = (EditText)findViewById(R.id.mblTxt);
         txtMessage = (EditText)findViewById(R.id.msgTxt);
         btnSms.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        final TextView test2 = findViewById(R.id.test2);
-        Button getLocation = findViewById(R.id.getloc);
 
         txtMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
