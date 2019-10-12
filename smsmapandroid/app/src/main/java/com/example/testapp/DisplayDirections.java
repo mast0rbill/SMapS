@@ -3,7 +3,9 @@ package com.example.testapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,7 +17,7 @@ public class DisplayDirections extends AppCompatActivity {
         setContentView(R.layout.activity_display_directions);
 
         LinearLayout directions = findViewById(R.id.directions);
-        String[] directionsList = MainActivity.direction.split("|");
+        String[] directionsList = MainActivity.direction.split("`");
         for(int i = 0;i < directionsList.length; i++){
             System.out.println(directionsList[i]);
             LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
@@ -26,5 +28,11 @@ public class DisplayDirections extends AppCompatActivity {
             tv.setTextSize(20);
             directions.addView(tv);
         }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivityForResult(myIntent, 0);
+        return true;
     }
 }
