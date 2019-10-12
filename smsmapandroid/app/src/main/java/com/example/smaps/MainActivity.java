@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     public static String twilioNumber = "13074666606";
     public static String[] latandlong = new String[2];
     public static String direction;
+
     public boolean read_direction = false;
 
     public static MainActivity instance;
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try{
                     SmsManager smgr = SmsManager.getDefault();
-                    String textToSend = latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
+                    String textToSend = "s/" + latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
                     smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
 
                     new Thread(new Runnable() {
