@@ -17,10 +17,24 @@ googleMaps.directions({
     const steps = response.json.routes[0].legs[0].steps;
     let distArr = [];
     let instructArr = [];
-    for(let i = 0; i < steps.Count; ++i) {
+    for(let i = 0; i < steps.length; ++i) {
         distArr[i] = steps[i].distance.text;
-        instructArr[i] = steps[i].html_instructions
-            .replace("</b>","").replace("<b>","");
+        instructArr[i] = steps[i].html_instructions;
+        for(let j = 0; j < instructArr[i].length; ++j) {
+            if(instructArr[i].charAt(j) == '<') {
+                instructArr[i] = instructArr[i].substring(0,j) + instructArr[i].substring(j+1);
+                while(instructArr[i].charAt(j) != '>') {
+                    instructArr[i] = instructArr[i].substring(0,j) + instructArr[i].substring(j+1);
+                }
+                instructArr[i] = instructArr[i].substring(0,j) + instructArr[i].substring(j+1);
+                j--;
+            }
+        }
+        
+        //instructArr[i].replace('Destination', ' Destination');
+        const ind = instructArr[i].indexOf('Destination');
+        if(ind > 0)
+            instructArr[i] = instructArr[i].substring(0, ind) + ' ' + instructArr[i].substring(ind);
         console.log("In " + distArr[i] + ", " + instructArr[i] + '\n');
     }
 })
