@@ -22,6 +22,9 @@ public class DisplayDirections extends AppCompatActivity {
         setContentView(R.layout.activity_display_directions);
 
         LinearLayout directions = findViewById(R.id.directions);
+
+        System.out.println("dir:" + MainActivity.direction);
+
         String[] directionsList = MainActivity.direction.split("`");
         for(int i = 0;i < directionsList.length-1; i++){
             System.out.println(directionsList[i]);

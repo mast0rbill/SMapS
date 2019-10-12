@@ -25,6 +25,9 @@ public class selection extends AppCompatActivity {
         LinearLayout directions = findViewById(R.id.linlayout);
         final String[] directionsList = MainActivity.direction.split("`");
         Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+
+        MainActivity.read_direction = false;
+
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
                 String msgData = "";
