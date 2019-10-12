@@ -71,6 +71,19 @@ public class MainActivity extends AppCompatActivity {
             // Permission has already been granted
         }
 
+        Button PrevDirections = findViewById(R.id.olddirection);
+        PrevDirections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try{
+                    getLayout();
+                    startActivity(new Intent(MainActivity.this, DisplayDirections.class));
+                }
+                catch (Exception e){
+                    Toast.makeText(MainActivity.this, "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         Window window = this.getWindow();
 
