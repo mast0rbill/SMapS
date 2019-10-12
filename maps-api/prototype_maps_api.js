@@ -14,7 +14,15 @@ googleMaps.directions({
 })
 .asPromise()
 .then((response) => {
-    console.log(response.json.routes[0].legs[0].steps);
+    const steps = response.json.routes[0].legs[0].steps;
+    let distArr = [];
+    let instructArr = [];
+    for(let i = 0; i < steps.Count; ++i) {
+        distArr[i] = steps[i].distance.text;
+        instructArr[i] = steps[i].html_instructions
+            .replace("</b>","").replace("<b>","");
+        console.log("In " + distArr[i] + ", " + instructArr[i] + '\n');
+    }
 })
 .catch((err) => {
     console.log(err);
