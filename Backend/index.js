@@ -19,9 +19,7 @@ function getOutputMsg(steps) {
     let instructArr = [];
 
     let len = steps.length;
-    console.log(steps);
 
-    console.log();
     for (let i = 0; i < len; ++i) {
         distArr[i] = steps[i].distance.text;
         instructArr[i] = steps[i].html_instructions;
@@ -30,7 +28,7 @@ function getOutputMsg(steps) {
             if (instructArr[i].charAt(j) === '<') {
                 instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
 
-                while (instructArr[i].charAt(j) != '>') {
+                while (instructArr[i].charAt(j) !== '>') {
                     instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
                 }
 
@@ -39,6 +37,7 @@ function getOutputMsg(steps) {
             }
         }
 
+        // Append to return
         if (i === 0)
             resp = instructArr[i] + '`';
         else if (i === len - 1) {
@@ -83,7 +82,7 @@ exports.reply = (req, res) => {
         destination: address,
         mode: 'walking',
     }).asPromise().then((mapResp) => {
-        console.log('Received response from Directions API!');
+        console.log('Received response from Directions API.');
 
         // Generate full message
         let fullMsg = getOutputMsg(mapResp.json.routes[0].legs[0].steps);
