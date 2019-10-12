@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Debug;
+import android.os.SystemClock;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.MenuItem;
@@ -86,9 +87,10 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     SmsManager smgr = SmsManager.getDefault();
                     String textToSend = latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
-                    //smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
+                    smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
                     //smgr.sendTextMessage(txtMobile.getText().toString(),null, textToSend,null,null);
                     Toast.makeText(MainActivity.this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+                    SystemClock.sleep(7000);
                     startActivity(new Intent(MainActivity.this, DisplayDirections.class));
                     read_direction = false;
                 }
