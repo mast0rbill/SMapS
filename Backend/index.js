@@ -80,7 +80,7 @@ exports.reply = (req, res) => {
     // Places search
     if (cmd === 's') {
         googleMaps.placesNearby({
-            radius: 16000,
+            radius: 1600,
             location: latitude.concat(',', longitude),
             keyword: input,
         }).asPromise().then((resp) => {
