@@ -28,10 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private String twilioNumber = "3074666606";
     private static String[] latandlong = new String[2];
+    public static String direction;
+    private boolean read_direction = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         TextView test = findViewById(R.id.test);
         Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
@@ -49,12 +53,18 @@ public class MainActivity extends AppCompatActivity {
                 int endofbodyindex = msgData.indexOf("locked");
                 int indexaddress = msgData.indexOf("address:");
                 int endindexaddress = msgData.indexOf("person:");
-                if(msgData.substring(indexaddress, endindexaddress).equals("address:+18053004654 ")) {
+                if(msgData.substring(indexaddress, endindexaddress).equals("address:+13074666606 ") && !read_direction) {
 //                System.out.println(msgData.substring(indexaddress, endindexaddress));
 //                if(msgData.substring(indexaddress, endindexaddress).equals("address:1511 ")) {
 //                    System.out.println("REACHED");
 //                    System.out.println(msgData.substring(indexaddress, endindexaddress));
 //                }
+//                    Intent intent = new Intent(MainActivity.this, DisplayDirections.class);
+//                    intent.putExtra("some_key", msgData.substring(indexofbody+5, endofbodyindex));
+//                    intent.putExtra("some_other_key", "a value");
+//                    startActivity(intent);
+                    read_direction = true;
+                    direction = msgData.substring(indexofbody+43, endofbodyindex);
                     test.setText(msgData.substring(indexofbody, endofbodyindex) + msgData.substring(indexaddress, endindexaddress));
                 }
             } while (cursor.moveToNext());
@@ -77,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     //smgr.sendTextMessage(txtMobile.getText().toString(),null, textToSend,null,null);
                     Toast.makeText(MainActivity.this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this, DisplayDirections.class));
+                    read_direction = false;
                 }
                 catch (Exception e){
                     Toast.makeText(MainActivity.this, "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
