@@ -19,12 +19,15 @@ function getOutputMsg(steps) {
     let instructArr = [];
 
     let len = steps.length;
+    console.log(steps);
+
+    console.log();
     for (let i = 0; i < len; ++i) {
         distArr[i] = steps[i].distance.text;
         instructArr[i] = steps[i].html_instructions;
 
         for (let j = 0; j < instructArr[i].length; ++j) {
-            if (instructArr[i].charAt(j) == '<') {
+            if (instructArr[i].charAt(j) === '<') {
                 instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
 
                 while (instructArr[i].charAt(j) != '>') {
@@ -36,21 +39,14 @@ function getOutputMsg(steps) {
             }
         }
 
-        if (i == 0)
+        if (i === 0)
             resp = instructArr[i] + '`';
-        else if (i == len - 1) {
-            const ind = instructArr[i].indexOf('Destination');
-            resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase(),
-                instructArr[i].substring(1, ind), '`');
-            resp = resp.concat('In ', distArr[i], ', your ', instructArr[i].substring(ind, ind + 1).toLowerCase(),
-                instructArr[i].substring(ind + 1), '`');
-            
-            console.log('concating dest: '.concat('In ', distArr[i], ', ', 'your ', instructArr[i].substring(ind, ind + 1).toLowerCase(), instructArr[i].substring(ind + 1), '`'));
-            console.log(ind + ' ' + instructArr[i].substring(ind, ind + 1).toLowerCase() + instructArr[i].substring(ind + 1));
+        else if (i === len - 1) {
+            resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase(), instructArr[i].substring(1), '`');
+            resp = resp.concat('In ', distArr[i], ', you will arrive at your destination.`');
         }
         else
-            resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase() +
-                instructArr[i].substring(1), '`');
+            resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase(), instructArr[i].substring(1), '`');
     }
 
     return resp;
