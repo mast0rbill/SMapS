@@ -1,4 +1,4 @@
-package com.example.testapp;
+package com.example.smaps;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,44 +10,40 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
-import android.os.SystemClock;
 import android.telephony.SmsManager;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.w3c.dom.Text;
-
-import java.io.Console;
-
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
-    public static String twilioNumber = "3074666606";
+    public static String twilioNumber = "13074666606";
     public static String[] latandlong = new String[2];
     public static String direction;
-    private boolean read_direction = false;
+    public boolean read_direction = false;
+
+    public static MainActivity instance;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getLatLong();
 
 
         if (ContextCompat.checkSelfPermission(this,
@@ -87,45 +83,11 @@ public class MainActivity extends AppCompatActivity {
     // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.common_google_signin_btn_text_light));
 
-        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
-        getLatLong();
-        if (cursor.moveToFirst()) { // must check the result to prevent exception
-            do {
-                String msgData = "";
-                for(int idx=0;idx<cursor.getColumnCount();idx++)
-                {
-                    msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
-                }
-                //System.out.println(msgData);
-                // use msgData
-                int indexofbody = msgData.indexOf("body:");
-                int endofbodyindex = msgData.indexOf("locked");
-                int indexaddress = msgData.indexOf("address:");
-                int endindexaddress = msgData.indexOf("person:");
-                if(msgData.substring(indexaddress, endindexaddress).equals("address:+13074666606 ") && !read_direction) {
-//                System.out.println(msgData.substring(indexaddress, endindexaddress));
-//                if(msgData.substring(indexaddress, endindexaddress).equals("address:1511 ")) {
-//                    System.out.println("REACHED");
-//                    System.out.println(msgData.substring(indexaddress, endindexaddress));
-//                }
-//                    Intent intent = new Intent(MainActivity.this, DisplayDirections.class);
-//                    intent.putExtra("some_key", msgData.substring(indexofbody+5, endofbodyindex));
-//                    intent.putExtra("some_other_key", "a value");
-//                    startActivity(intent);
-                    read_direction = true;
-                    direction = msgData.substring(indexofbody+43, endofbodyindex);
-                    //test.setText(msgData.substring(indexofbody, endofbodyindex) + msgData.substring(indexaddress, endindexaddress));
-                }
-            } while (cursor.moveToNext());
-        } else {
-            // empty box, no SMS
-        }
         final EditText txtMobile;
         final EditText txtMessage;
         Button btnSms;
         btnSms = (Button)findViewById(R.id.btnSend);
-        //txtMobile = (EditText)findViewById(R.id.mblTxt);
         txtMessage = (EditText)findViewById(R.id.msgTxt);
         btnSms.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,11 +96,24 @@ public class MainActivity extends AppCompatActivity {
                     SmsManager smgr = SmsManager.getDefault();
                     String textToSend = latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
                     smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
-                    //smgr.sendTextMessage(txtMobile.getText().toString(),null, textToSend,null,null);
-                    Toast.makeText(MainActivity.this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
-                    SystemClock.sleep(7000);
-                    startActivity(new Intent(MainActivity.this, selection.class));
-                    read_direction = false;
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            long curTime = System.currentTimeMillis();
+                            while(System.currentTimeMillis() - curTime < 20000) {
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getLayout();
+                                    startActivity(new Intent(MainActivity.this, DisplayDirections.class));
+                                    read_direction = false;
+                                }
+                            });
+                        }
+                    }).run();
                 }
                 catch (Exception e){
                     Toast.makeText(MainActivity.this, "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
@@ -180,5 +155,32 @@ public class MainActivity extends AppCompatActivity {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-
+    public void getLayout(){
+        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+        if (cursor.moveToFirst()) { // must check the result to prevent exception
+            do {
+                String msgData = "";
+                for(int idx=0;idx<cursor.getColumnCount();idx++)
+                {
+                    msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
+                }
+                //System.out.println(msgData);
+                // use msgData
+//                if(msgData.contains("We could not find")){
+//                    msgData = "There are no matching restaurants in range`";
+//                }
+                int indexofbody = msgData.indexOf("body:");
+                int endofbodyindex = msgData.indexOf("locked");
+                int indexaddress = msgData.indexOf("address:");
+                int endindexaddress = msgData.indexOf("person:");
+                if(msgData.substring(indexaddress, endindexaddress).equals("address:+13074666606 ") && !read_direction) {
+                    read_direction = true;
+                    direction = msgData.substring(indexofbody+43, endofbodyindex);
+                }
+            } while (cursor.moveToNext());
+        } else {
+            // empty box, no SMS
+        }
+        cursor.close();
+    }
 }

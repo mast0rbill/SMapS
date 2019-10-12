@@ -1,16 +1,14 @@
-package com.example.testapp;
+package com.example.smaps;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class DisplayDirections extends AppCompatActivity {
@@ -23,6 +21,20 @@ public class DisplayDirections extends AppCompatActivity {
 
         LinearLayout directions = findViewById(R.id.directions);
         String[] directionsList = MainActivity.direction.split("`");
+        System.out.println(directionsList.length);
+        if(directionsList.length == 1){
+            System.out.println("REACHED");
+            LinearLayout layout = new LinearLayout(DisplayDirections.this);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            TextView tv=new TextView(this);
+            tv.setLayoutParams(lparams);
+            tv.setText("There were no matching places in range");
+            tv.setTextSize(20);
+            layout.addView(tv);
+            directions.addView(layout);
+        }
         for(int i = 0;i < directionsList.length-1; i++){
             System.out.println(directionsList[i]);
             LinearLayout layout = new LinearLayout(DisplayDirections.this);

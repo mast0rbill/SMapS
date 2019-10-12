@@ -1,4 +1,4 @@
-package com.example.testapp;
+package com.example.smaps;
 
 import android.content.Context;
 
