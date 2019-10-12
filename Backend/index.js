@@ -42,10 +42,11 @@ function getOutputMsg(steps) {
             const ind = instructArr[i].indexOf('Destination');
             resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase(),
                 instructArr[i].substring(1, ind), '`');
-            resp = resp.concat('In ', distArr[i], ', ', 'your ', instructArr[i].substring(ind, ind + 1).toLowerCase(),
+            resp = resp.concat('In ', distArr[i], ', your ', instructArr[i].substring(ind, ind + 1).toLowerCase(),
                 instructArr[i].substring(ind + 1), '`');
             
             console.log('concating dest: '.concat('In ', distArr[i], ', ', 'your ', instructArr[i].substring(ind, ind + 1).toLowerCase(), instructArr[i].substring(ind + 1), '`'));
+            console.log(ind + ' ' + instructArr[i].substring(ind, ind + 1).toLowerCase() + instructArr[i].substring(ind + 1));
         }
         else
             resp = resp.concat('In ', distArr[i - 1], ', ', instructArr[i].substring(0, 1).toLowerCase() +
