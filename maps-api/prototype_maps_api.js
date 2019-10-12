@@ -2,7 +2,7 @@
 
 // $ npm install @google/maps
 
-const googleMapsClient = require('@google/maps').createClient({
+const googleMaps = require('@google/maps').createClient({
     key: 'AIzaSyC6uGbj_Wog00v0xUV_UNxwZD-HKmyZgWo',
     Promise: Promise
 });
@@ -14,7 +14,7 @@ googleMaps.directions({
 })
 .asPromise()
 .then((response) => {
-    console.log(response.json.routes.legs.steps);
+    console.log(response.json.routes[0].legs[0].steps);
 })
 .catch((err) => {
     console.log(err);
