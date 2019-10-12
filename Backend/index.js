@@ -13,6 +13,39 @@ const MessagingResponse = twilio.twiml.MessagingResponse;
 const projectId = process.env.GCLOUD_PROJECT;
 const region = 'us-central1';
 
+function getOutputMsg(steps) {
+    let resp = '';
+    let distArr = [];
+    let instructArr = [];
+
+    let len = steps.length;
+    for (let i = 0; i < len; ++i) {
+        distArr[i] = steps[i].distance.text;
+        instructArr[i] = steps[i].html_instructions;
+
+        for (let j = 0; j < instructArr[i].length; ++j) {
+            if (instructArr[i].charAt(j) == '<') {
+                instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
+
+                while (instructArr[i].charAt(j) != '>') {
+                    instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
+                }
+
+                instructArr[i] = instructArr[i].substring(0, j) + instructArr[i].substring(j + 1);
+                j--;
+            }
+        }
+
+        const ind = instructArr[i].indexOf('Destination');
+        if (ind > 0)
+            instructArr[i] = instructArr[i].substring(0, ind) + ' ' + instructArr[i].substring(ind);
+
+        resp = resp.concat('In ', distArr[i], ', ', instructArr[i], '|');
+    }
+
+    return resp;
+}
+
 exports.reply = (req, res) => {
     // Validation for Twilio
     let isValid = true;
@@ -47,18 +80,7 @@ exports.reply = (req, res) => {
         console.log('Received response from Directions API!');
 
         // Generate full message
-        let fullMsg = '';
-        let len = mapResp.json.routes[0].legs[0].steps.length;
-
-        for (let i = 0; i < len; i++) {
-            fullMsg.concat(mapResp.json.routes[0].legs[0].steps[i].html_instructions);
-            if(i != len - 1) {
-                fullMsg.concat(item, '|');
-            } else {
-                //fullMsg.concat(item, '!');
-            }
-        }
-
+        let fullMsg = getOutputMsg(mapResp.json.routes[0].legs[0].steps);
         console.log('Sending response: '.concat(fullMsg));
 
         const textMsg = new MessagingResponse();
