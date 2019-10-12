@@ -70,36 +70,45 @@ exports.reply = (req, res) => {
 
     // Parse input
     let split = req.body.Body.split('/');
-    let latitude = split[0];
-    let longitude = split[1];
-    let input = split[2];
+    let cmd = split[0];
+    let latitude = split[1];
+    let longitude = split[2];
+    let input = split[3];
 
     console.log('Receiving request. latitude='.concat(latitude, ' longitude=', longitude, 'address=', input));
 
-    let inputSplit = input.split(' ');
     // Places search
-    if (inputSplit.length > 0 && inputSplit[0].toLowerCase() === 'search') {
+    if (cmd === 's') {
         googleMaps.placesNearby({
+            radius: 16000,
             location: latitude.concat(',', longitude),
-            keyword: input.substring(inputSplit[0].length),
-            rankby: 'distance',
+            keyword: input,
         }).asPromise().then((resp) => {
             console.log('Received response from Places API: ' + resp.json.results);
 
-            let results = resp.json.results;
+            let fullMsg = '';
 
-            for (let r of results) {
-                console.log(r.name + ' ' + r.vicinity);
+            let len = resp.json.results.length;
+            for (let i = 0; i < len; i++) {
+                fullMsg += resp.json.results[i].name + '`' + resp.json.results[i].vicinity;
+                if(i !== resp.json.results.len - 1) {
+                    fullMsg += '`';
+                }
             }
+
+            console.log('Sending response: ' + fullMsg);
+
+            const textMsg = new MessagingResponse();
+            textMsg.message(fullMsg);
 
             res
                 .status(200)
                 .type('text/xml')
-                .end();
+                .end(textMsg.toString());
         }).catch((err) => {
             console.log(err);
         });
-    } else {
+    } else if(cmd === 'd') {
         // retrieve directions
         googleMaps.directions({
             origin: latitude.concat(',', longitude),
