@@ -37,14 +37,14 @@ function getOutputMsg(steps) {
         }
 
         if (i == 0)
-            resp = instructArr[i];
+            resp = instructArr[i], '`';
         else if (i == len-1) {
             const ind = instructArr[i].indexOf('Destination');
             resp = resp.concat('In ', distArr[i-1], ', ', resp.concat(instructArr[i].substring(0, ind)), '|'); 
-            resp = resp.concat('In', distArr[i], ', ', instructArr[i].substring(ind), '|');
+            resp = resp.concat('In', distArr[i], ', ', instructArr[i].substring(ind), '`');
         }
         else
-            resp = resp.concat('In ', distArr[i-1], ', ', instructArr[i], '|');
+            resp = resp.concat('In ', distArr[i-1], ', ', instructArr[i], '`');
     }
 
     return resp;
