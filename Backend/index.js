@@ -13,7 +13,7 @@ const MessagingResponse = twilio.twiml.MessagingResponse;
 const projectId = process.env.GCLOUD_PROJECT;
 const region = 'us-central1';
 
-function getOutputMsg(steps) {
+function formatDirectionOutput(steps) {
     let resp = '';
     let distArr = [];
     let instructArr = [];
@@ -69,33 +69,58 @@ exports.reply = (req, res) => {
     }
 
     // Parse input
-    let inputSplit = req.body.Body.split('/');
-    let latitude = inputSplit[0];
-    let longitude = inputSplit[1];
-    let address = inputSplit[2];
+    let split = req.body.Body.split('/');
+    let latitude = split[0];
+    let longitude = split[1];
+    let input = split[2];
 
-    console.log('Receiving request. latitude='.concat(latitude, ' longitude=', longitude, 'address=', address));
+    console.log('Receiving request. latitude='.concat(latitude, ' longitude=', longitude, 'address=', input));
 
-    // retrieve directions
-    googleMaps.directions({
-        origin: latitude.concat(',', longitude),
-        destination: address,
-        mode: 'walking',
-    }).asPromise().then((mapResp) => {
-        console.log('Received response from Directions API.');
+    let inputSplit = input.split(' ');
+    // Places search
+    if (inputSplit.length > 0 && inputSplit[0].toLowerCase() === 'search') {
+        googleMaps.placesNearby({
+            location: latitude.concat(',', longitude),
+            keyword: input.substring(inputSplit[0].length),
+            rankby: 'distance',
+        }).asPromise().then((resp) => {
+            console.log('Received response from Places API: ' + resp.json.results);
 
-        // Generate full message
-        let fullMsg = getOutputMsg(mapResp.json.routes[0].legs[0].steps);
-        console.log('Sending response: '.concat(fullMsg));
+            let results = resp.json.results;
 
-        const textMsg = new MessagingResponse();
-        textMsg.message(fullMsg);
+            for (let r of results) {
+                console.log(r.name + ' ' + r.vicinity);
+            }
 
-        res
-            .status(200)
-            .type('text/xml')
-            .end(textMsg.toString());
-    }).catch((err) => {
-        console.log(err);
-    });
+            res
+                .status(200)
+                .type('text/xml')
+                .end();
+        }).catch((err) => {
+            console.log(err);
+        });
+    } else {
+        // retrieve directions
+        googleMaps.directions({
+            origin: latitude.concat(',', longitude),
+            destination: input,
+            mode: 'walking',
+        }).asPromise().then((mapResp) => {
+            console.log('Received response from Directions API.');
+
+            // Generate full message
+            let fullMsg = formatDirectionOutput(mapResp.json.routes[0].legs[0].steps);
+            console.log('Sending response: '.concat(fullMsg));
+
+            const textMsg = new MessagingResponse();
+            textMsg.message(fullMsg);
+
+            res
+                .status(200)
+                .type('text/xml')
+                .end(textMsg.toString());
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
 };
