@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try{
                     SmsManager smgr = SmsManager.getDefault();
-                    String textToSend = "s/" + latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
+                    String textToSend = latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
                     smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
 
                     new Thread(new Runnable() {
