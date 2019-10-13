@@ -6,4 +6,6 @@
 
 To try the application, build the Android Studio project onto your Android device. Due to the limitations of our Twilio trial account, we must whitelist your phone number. If you would like your number whitelisted, please email us at yuxuanliu9518@gmail.com
 
+DevPost: https://devpost.com/software/smaps
+
 Have fun!
