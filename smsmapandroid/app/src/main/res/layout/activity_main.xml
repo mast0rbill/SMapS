@@ -38,6 +38,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_centerInParent="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:text="Get Direction" />
 
     <Button
@@ -49,6 +50,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="100dp"
         android:background="@drawable/roundedbutton"
+        android:foreground="?android:attr/selectableItemBackground"
         android:padding="10dp"
         android:text="Previous Direction" />
 
