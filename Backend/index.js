@@ -70,66 +70,54 @@ exports.reply = (req, res) => {
 
     // Parse input
     let split = req.body.Body.split('/');
-    let cmd = split[0];
-    let latitude = split[1];
-    let longitude = split[2];
-    let input = split[3];
+    let latitude = split[0];
+    let longitude = split[1];
+    let input = split[2];
 
-    console.log('Receiving request. latitude='.concat(latitude, ' longitude=', longitude, 'address=', input));
+    console.log('Receiving request. ' + req.body.Body);
 
     // Places search
-    if (cmd === 's') {
-        googleMaps.placesNearby({
-            radius: 1600,
-            location: latitude.concat(',', longitude),
-            keyword: input,
-        }).asPromise().then((resp) => {
-            console.log('Received response from Places API: ' + resp.json.results);
-
-            let fullMsg = '';
-
-            let len = resp.json.results.length;
-            for (let i = 0; i < len; i++) {
-                fullMsg += resp.json.results[i].name + '`' + resp.json.results[i].vicinity;
-                if(i !== resp.json.results.len - 1) {
-                    fullMsg += '`';
-                }
-            }
-
-            console.log('Sending response: ' + fullMsg);
-
+    googleMaps.placesNearby({
+        radius: 2000,
+        location: latitude.concat(',', longitude),
+        keyword: input,
+    }).asPromise().then((resp) => {
+        if (resp.json.results.length === 0) {
             const textMsg = new MessagingResponse();
-            textMsg.message(fullMsg);
+            textMsg.message('We could not find ' + input + ' in your area.');
 
             res
                 .status(200)
                 .type('text/xml')
                 .end(textMsg.toString());
-        }).catch((err) => {
-            console.log(err);
-        });
-    } else if(cmd === 'd') {
-        // retrieve directions
-        googleMaps.directions({
-            origin: latitude.concat(',', longitude),
-            destination: input,
-            mode: 'walking',
-        }).asPromise().then((mapResp) => {
-            console.log('Received response from Directions API.');
+        } else {
+            let address = resp.json.results[0].vicinity;
+            console.log('Received response from Places API: ' + address);
 
-            // Generate full message
-            let fullMsg = formatDirectionOutput(mapResp.json.routes[0].legs[0].steps);
-            console.log('Sending response: '.concat(fullMsg));
+            // retrieve directions
+            googleMaps.directions({
+                origin: latitude.concat(',', longitude),
+                destination: address,
+                mode: 'walking',
+            }).asPromise().then((mapResp) => {
+                console.log('Received response from Directions API.');
 
-            const textMsg = new MessagingResponse();
-            textMsg.message(fullMsg);
+                // Generate full message
+                let fullMsg = formatDirectionOutput(mapResp.json.routes[0].legs[0].steps);
+                console.log('Sending response: '.concat(fullMsg));
 
-            res
-                .status(200)
-                .type('text/xml')
-                .end(textMsg.toString());
-        }).catch((err) => {
-            console.log(err);
-        });
-    }
+                const textMsg = new MessagingResponse();
+                textMsg.message(fullMsg);
+
+                res
+                    .status(200)
+                    .type('text/xml')
+                    .end(textMsg.toString());
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+    }).catch((err) => {
+        console.log(err);
+    });
 };
