@@ -29,7 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
-    public static String twilioNumber = "13074666606";
+    public static String twilioNumber = "12172901555";
     public static String[] latandlong = new String[2];
     public static String direction;
 
@@ -99,17 +99,17 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText txtMobile;
         final EditText txtMessage;
-        Button btnSms;
+        final Button btnSms;
         btnSms = (Button)findViewById(R.id.btnSend);
         txtMessage = (EditText)findViewById(R.id.msgTxt);
         btnSms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try{
+                    btnSms.setClickable(false);
                     SmsManager smgr = SmsManager.getDefault();
                     String textToSend = latandlong[0] + "/" + latandlong[1] + "/" + txtMessage.getText().toString();
                     smgr.sendTextMessage(twilioNumber,null, textToSend,null,null);
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
                     }).run();
+
                 }
                 catch (Exception e){
                     Toast.makeText(MainActivity.this, "SMS Failed to Send, Please try again", Toast.LENGTH_SHORT).show();
